@@ -28,7 +28,9 @@ def num_eights(n):
     True
     """
     "*** YOUR CODE HERE ***"
-
+    if n == 0:
+        return 0
+    return num_eights(n // 10) + (1 if n % 10 == 8 else 0)
 
 def digit_distance(n):
     """Determines the digit distance of n.
@@ -50,6 +52,9 @@ def digit_distance(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    if n < 10:
+        return 0
+    return abs(n % 10 - n // 10 % 10) + digit_distance(n // 10)
 
 
 def interleaved_sum(n, odd_func, even_func):
@@ -72,6 +77,14 @@ def interleaved_sum(n, odd_func, even_func):
     True
     """
     "*** YOUR CODE HERE ***"
+    def sum_from(k):
+        if k > n:
+            return 0
+        elif k == n:
+            return odd_func(k)
+        return odd_func(k) + even_func(k + 1) + sum_from(k + 2)
+    
+    return sum_from(1)
 
 
 def next_larger_coin(coin):
@@ -127,6 +140,15 @@ def count_coins(total):
     """
     "*** YOUR CODE HERE ***"
 
+    def count_part(n, value=None):
+        if n == 0:
+            return 1
+        if n < 0:
+            return 0
+        if value is None:
+            return 0
+        return count_part(n - value, value) + count_part(n, next_larger_coin(value))
+    return count_part(total, 1)
 
 def print_move(origin, destination):
     """Print instructions to move a disk."""
@@ -162,6 +184,17 @@ def move_stack(n, start, end):
     assert 1 <= start <= 3 and 1 <= end <= 3 and start != end, "Bad start/end"
     "*** YOUR CODE HERE ***"
 
+    via = 6 - start - end
+    def hanoi(n, start, via, end):
+        if n == 1:
+            print_move(start, end)
+            return
+        hanoi(n - 1, start, end, via)
+        print_move(start, end)
+        hanoi(n - 1, via, start, end)
+
+    hanoi(n, start, via, end)
+
 
 from operator import sub, mul
 
@@ -176,5 +209,5 @@ def make_anonymous_factorial():
     ...     ['Assign', 'AnnAssign', 'AugAssign', 'NamedExpr', 'FunctionDef', 'Recursion'])
     True
     """
-    return 'YOUR_EXPRESSION_HERE'
+    return (lambda f: f(f))(lambda f: lambda x: 1 if x == 0 else x * f(f)(x - 1))
 
